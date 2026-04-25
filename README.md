@@ -2,16 +2,17 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<title>Klavye Piyano</title>
+<title>Sesli Piyano</title>
+
 <style>
 :root {
   --bg: #0a0a0f;
   --white: #ffffff;
-  --black: #111;
   --accent: #7c6af7;
 }
 
 body {
+  margin: 0;
   background: var(--bg);
   display: flex;
   justify-content: center;
@@ -20,35 +21,30 @@ body {
   font-family: sans-serif;
 }
 
-/* piyano */
 .piano {
   display: flex;
-  gap: 4px;
+  gap: 6px;
 }
 
 .key {
-  width: 60px;
-  height: 220px;
+  width: 70px;
+  height: 240px;
   background: var(--white);
-  border-radius: 6px;
+  border-radius: 8px;
   border: 2px solid #ccc;
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  padding-bottom: 10px;
+  padding-bottom: 12px;
+  font-weight: bold;
   cursor: pointer;
   transition: .1s;
-  user-select: none;
 }
 
 .key.active {
   background: var(--accent);
   color: #fff;
   transform: scale(0.95);
-}
-
-.label {
-  font-size: 14px;
 }
 </style>
 </head>
@@ -65,40 +61,45 @@ body {
   <div class="key" data-key="i">İ</div>
 </div>
 
-<script>
-const sounds = {
-  f: "https://www.soundjay.com/piano/piano-do.wav",
-  g: "https://www.soundjay.com/piano/piano-re.wav",
-  h: "https://www.soundjay.com/piano/piano-mi.wav",
-  j: "https://www.soundjay.com/piano/piano-fa.wav",
-  k: "https://www.soundjay.com/piano/piano-sol.wav",
-  l: "https://www.soundjay.com/piano/piano-la.wav",
-  "ş": "https://www.soundjay.com/piano/piano-ti.wav",
-  i: "https://www.soundjay.com/piano/piano-do.wav"
-};
+<!-- Sesler -->
+<audio id="f" src="https://cdn.jsdelivr.net/gh/gleitz/midi-js-soundfonts/FluidR3_GM/acoustic_grand_piano-mp3/C4.mp3"></audio>
+<audio id="g" src="https://cdn.jsdelivr.net/gh/gleitz/midi-js-soundfonts/FluidR3_GM/acoustic_grand_piano-mp3/D4.mp3"></audio>
+<audio id="h" src="https://cdn.jsdelivr.net/gh/gleitz/midi-js-soundfonts/FluidR3_GM/acoustic_grand_piano-mp3/E4.mp3"></audio>
+<audio id="j" src="https://cdn.jsdelivr.net/gh/gleitz/midi-js-soundfonts/FluidR3_GM/acoustic_grand_piano-mp3/F4.mp3"></audio>
+<audio id="k" src="https://cdn.jsdelivr.net/gh/gleitz/midi-js-soundfonts/FluidR3_GM/acoustic_grand_piano-mp3/G4.mp3"></audio>
+<audio id="l" src="https://cdn.jsdelivr.net/gh/gleitz/midi-js-soundfonts/FluidR3_GM/acoustic_grand_piano-mp3/A4.mp3"></audio>
+<audio id="ş" src="https://cdn.jsdelivr.net/gh/gleitz/midi-js-soundfonts/FluidR3_GM/acoustic_grand_piano-mp3/B4.mp3"></audio>
+<audio id="i" src="https://cdn.jsdelivr.net/gh/gleitz/midi-js-soundfonts/FluidR3_GM/acoustic_grand_piano-mp3/C5.mp3"></audio>
 
-function playSound(key) {
-  const audio = new Audio(sounds[key]);
-  audio.play();
+<script>
+function play(key) {
+  const audio = document.getElementById(key);
+  if (!audio) return;
+
+  // aynı sesi üst üste çalabilmek için clone
+  const sound = audio.cloneNode();
+  sound.play();
 
   const el = document.querySelector(`[data-key="${key}"]`);
   if (el) {
     el.classList.add("active");
-    setTimeout(() => el.classList.remove("active"), 150);
+    setTimeout(() => el.classList.remove("active"), 120);
   }
 }
 
 /* klavye */
 document.addEventListener("keydown", e => {
-  const key = e.key.toLowerCase();
-  if (sounds[key]) playSound(key);
+  let key = e.key.toLowerCase();
+
+  // Türkçe klavye fix
+  if (key === "ı") key = "i";
+
+  play(key);
 });
 
 /* mouse */
 document.querySelectorAll(".key").forEach(k => {
-  k.addEventListener("click", () => {
-    playSound(k.dataset.key);
-  });
+  k.addEventListener("click", () => play(k.dataset.key));
 });
 </script>
 
